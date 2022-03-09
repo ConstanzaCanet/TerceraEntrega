@@ -4,6 +4,7 @@ import initializePassport from "./config/passport-config.js";
 import sessionRouter from "./router/session.js";
 import productsRouter from "./router/productsRouter.js";
 import userRuter from "./router/userRuter.js";
+import cartRouter from "./router/cartRouter.js";
 import cookieParser from "cookie-parser";
 
 
@@ -20,8 +21,9 @@ initializePassport();
 app.use(passport.initialize())
 
 /*ruteo basicon */
-app.use('/',productsRouter)
+app.use('/home',productsRouter)
 app.use('/session',sessionRouter)
 app.use('/users', userRuter)
+app.use('/cart', cartRouter)
 
 
