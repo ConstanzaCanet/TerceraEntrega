@@ -29,4 +29,9 @@ export default class GenericQueries{
         document._id=id;
         return this.dao.updateCart(document,this.model)
     }
+
+    addCart = async (id,document)=>{
+        document._id= id;
+        return this.dao.addCart(document,this.model)
+    }
 }

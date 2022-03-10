@@ -12,5 +12,8 @@ export default{
     },
     jwt:{
         SECRET:process.env.JWT_SECRET||'123456abcd'
+    },
+    env:{
+        NODE_ENV:process.env.NODE_ENV||'PROD'
     }
 }

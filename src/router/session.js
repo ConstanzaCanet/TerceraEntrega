@@ -15,19 +15,29 @@ router.post('/register',upload.single('avatar'),passportGlobal('register'),(req,
     res.send({message:'user registrado!'})    
 })
 
-router.post('/login',upload.none(),passportGlobal('login'),(req,res)=>{
+router.post('/login',upload.none(),passportGlobal('login'),(req,res)=>{   
     let user = req.user;
     console.log(user)
-    let token = jwt.sign(user,config.jwt.SECRET)
-    res.cookie("JWT_COOKIE",token,{
-        httpOnly:true,
-        maxAge:1000*60*60
-    })
-    res.send({status:"success",message:"Estas logueado amigo"})
+    try {
+        let token = jwt.sign(user,config.jwt.SECRET)
+        res.cookie("JWT_COOKIE",token,{
+            httpOnly:true,
+            maxAge:1000*60*60,
+        })
+        res.send({status:"success",message:"Bienvendo amigo! Estas logueado"})
+    } catch (error) {
+        console.log(error)
+    }
 })
 
 router.get('/logout',(req,res)=>{
-    res.clearCookie('JWT_COOKIE')
-    res.send({message:"Hasta luego amigo! te has deslogueado"})
+    try {        
+        res.clearCookie('JWT_COOKIE')
+        res.send({message:"Hasta luego amigo! te has deslogueado"})
+    } catch (error) {
+        console.log(error)
+    }
 })
+
+
 export default router;

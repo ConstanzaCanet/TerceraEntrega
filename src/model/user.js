@@ -18,7 +18,7 @@ export default class User{
             email:String,
             password:String,
             carts:[{
-                type:Boolean,
+                type:String,
                 default:true
             }],
             role:String,

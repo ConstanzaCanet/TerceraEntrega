@@ -61,6 +61,14 @@ export default class Dao{
         return result.toObject();
     }
     
+    
+    addCart = async(document,entity)=>{
+        if(!this.models[entity]) throw new Error(`Esquema ${entity} no encontrado`)
+        let id = document._id;
+        let result = await this.models[entity].findByIdAndUpdate(id,{$push:{carts:document.carts}})
+        return result.toObject();
+    }
+    
     delete = async(id,entity)=>{
         if(!this.models[entity]) throw new Error(`Esquema ${entity} no encontrado`)
         let result = await this.models[entity].findByIdAndDelete(id);
