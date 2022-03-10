@@ -9,7 +9,7 @@ const __dirname = dirname(filename);
 
 
 export const createHash = password=>bcrypt.hashSync(password,bcrypt.genSaltSync(10))
-export const isValidPass = (user,password) => bcrypt.compareSync(password,user.password)
+export const isValidPass = (user,password) => bcrypt.compareSync(password,user.password);
 export const cookieExtractor = req =>{
     let token = null;
     if(req&&req.cookies){
