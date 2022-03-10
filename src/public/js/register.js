@@ -19,8 +19,8 @@ form.addEventListener('submit',function(event){
         }
     }).then(json=>{
         form.reset();
+        location.href='/login'
         alert('Usuario Registrado! Ahora puedes logearte');
-       location.replace('../pages/login.html')
     })
 })
 

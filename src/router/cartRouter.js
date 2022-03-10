@@ -47,7 +47,7 @@ router.get('/:cid',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),async(req, 
     }
 })
 
-router.post('/:cid',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),async(req, res)=>{
+router.post('/:cid',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),upload.none(),async(req, res)=>{
     try {
         let cid = req.params.cid;
         let newIdProduct = req.body;

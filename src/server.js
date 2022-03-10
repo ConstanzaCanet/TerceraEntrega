@@ -9,7 +9,6 @@ import cartRouter from "./router/cartRouter.js";
 import cookieParser from "cookie-parser";
 import { createLogger } from "./utils.js";
 import config from "./config/config.js";
-import { passportGlobal } from "./utils/middleweres.js";
 
 const app = express();
 const PORT = process.env.PORT||8080;
@@ -40,6 +39,15 @@ app.use('/cart', cartRouter)
 app.get('/login',(req,res)=>{
     res.sendFile(__dirname+'/public/pages/login.html')
 })
+
+app.get('/register',(req,res)=>{
+    res.sendFile(__dirname+'/public/pages/register.html')
+})
+
+app.get('/view/cart',(req,res)=>{
+    res.sendFile(__dirname+'/public/pages/cart.html')
+})
+
 
 
 /*Configuro Winston como logger*/

@@ -29,7 +29,7 @@ fetch('/home').then(result=>result.json()).then(json=>{
             <img class="card-img-top" src="${result.thumbnail}" alt="Card image cap">
             <h5 class="card-title">${result.name}</h5>
             <p class="card-text">$${result.price}</p>
-            <a href="http://localhost:8080/home/${result._id}" class="btn btn-primary">VER</a>
+            <a href="#" onclick='verProducto("${result._id}")' id="botoVer" class="btn btn-primary">VER</a>
             </div>
         </div>
         </div>
@@ -45,4 +45,76 @@ fetch('/home').then(result=>result.json()).then(json=>{
 function logout(){
   fetch('/session/logout')
   return location.href='/login'
+}
+
+
+//VER CADA PRODUCTO Y AGREGAR AL CARRO
+function verProducto(id){
+  fetch(`/home/${id}`).then(result=>result.json()).then(json=>{
+    let result=json;
+    let tabla = document.getElementById('productsTable')
+
+
+    const content = `
+    <div class="card m-4">
+      <div class="row" style="height: 500px;">
+        <div class="col-md-4">
+            <img src="${result.thumbnail}" alt="${result._id}" class="w-100" style="height: 500px; object-fit: cover;">
+          </div>
+          <div class="col-md-8 px-3 mr-2">
+            <div class="card-block px-3 m-4">
+              <h4 class="card-title">${result.name}</h4>
+              <p class="card-text">${result.description}</p>
+              <p class="card-text"><b>Precio: $${result.price}</b></p>
+              
+              <div style="margin-top: 10%;">
+                <button type="button" oncliclass="btn btn-warning" onclick='alCarro("${result._id}")'>Comprar</button>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  `;
+
+  tabla.innerHTML = content;
+  })
+};
+
+//Comprar--> perdon si es engorroso el codigo a continuacion trate de hacer un carrito con passport pero me rompia todo,
+//lo que hice fue seleccionar el ultimo carro creado y agregar alli los servicios.
+
+function alCarro(id){
+  let sendObject={
+    _id:id
+  }
+  console.log(sendObject)
+  let carros = user.carts;
+  if (carros.length>1) {
+    let Item=carros[carros.length-1]
+    fetch(`cart/${Item}`,{
+      method:"POST",
+      body:JSON.stringify(sendObject),
+      headers:{
+      'Content-Type':'application/json'
+       }
+    }).then(json=>{
+      console.log(json)  
+      alert('Agregado al carro');
+  })
+  }else{
+
+    fetch('/cart',{
+        method:"POST",
+        body:JSON.stringify(sendObject),
+        headers:{
+          'Content-Type':'application/json'
+      }
+    }).then(json=>{
+        console.log(json)  
+        alert('Agregado al carro');
+    })
+  }
+
 }
