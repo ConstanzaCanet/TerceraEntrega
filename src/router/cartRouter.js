@@ -39,6 +39,7 @@ router.post('/',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),upload.none(),
 router.get('/:cid',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),async(req, res)=>{
     try {
         let cid = req.params.cid;
+        console.log(cid)
         let result = await cartService.getBy({_id:cid})
         res.send(result) 
         

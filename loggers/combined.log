@@ -174,3 +174,7 @@
 {"level":"warn","message":"Endpoint invalido"}
 {"level":"info","message":"GET at /login.html"}
 {"level":"warn","message":"Endpoint invalido"}
+{"level":"info","message":"GET at /view/undefined"}
+{"level":"warn","message":"Endpoint invalido"}
+{"level":"info","message":"GET at /view/undefined"}
+{"level":"warn","message":"Endpoint invalido"}
