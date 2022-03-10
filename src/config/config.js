@@ -15,5 +15,9 @@ export default{
     },
     env:{
         NODE_ENV:process.env.NODE_ENV||'PROD'
+    },
+    mns:{
+        appG:process.env.appG||"jktrhwwbakfegqnz",
+        CORREOEMPRESA:process.env.CORREOEMPRESA||'carnetconstanza@gmail.com'
     }
 }

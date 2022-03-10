@@ -1,4 +1,3 @@
-
 let tikets;
 let carro;
 let user;
@@ -86,5 +85,4 @@ function verCarro(idCarro){
 
 
 function Enviar(idCarro){
-    
 }

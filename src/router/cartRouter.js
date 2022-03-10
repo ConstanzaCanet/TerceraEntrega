@@ -35,7 +35,7 @@ router.post('/',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),upload.none(),
         console.log('aaayy eso si no se va a poder! mira con atencion el error: '+error)
     }
 });
-
+//Veo informacion de carrito existente
 router.get('/:cid',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),async(req, res)=>{
     try {
         let cid = req.params.cid;
@@ -48,6 +48,7 @@ router.get('/:cid',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),async(req, 
     }
 })
 
+//Agrego producto a carrito existente
 router.post('/:cid',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),upload.none(),async(req, res)=>{
     try {
         let cid = req.params.cid;
@@ -60,7 +61,10 @@ router.post('/:cid',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),upload.non
     }
 })
 
-router.delete(':/cid',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),async(req, res)=>{
+
+
+//Elimino carrito existente
+router.delete('/:cid',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),async(req, res)=>{
     try {
         let cid = req.params.cid
         let result = await cartService.delete({_id:cid})

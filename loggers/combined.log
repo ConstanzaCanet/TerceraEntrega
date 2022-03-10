@@ -178,3 +178,5 @@
 {"level":"warn","message":"Endpoint invalido"}
 {"level":"info","message":"GET at /view/undefined"}
 {"level":"warn","message":"Endpoint invalido"}
+{"level":"info","message":"POST at /api/users"}
+{"level":"info","message":"POST at /api/users"}

@@ -12,6 +12,7 @@ router.get('/current',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),(req, re
 })
 
 router.post('/register',upload.single('avatar'),passportGlobal('register'),(req, res)=>{
+    let file = req.file;
     res.send({message:'user registrado!'})    
 })
 
