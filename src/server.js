@@ -27,6 +27,9 @@ app.use(passport.initialize())
 
 /*ruteo basicon */
 app.use(express.static('public'))
+app.get('/',(req,res)=>{
+    res.render(index)
+})
 app.use('/home',productsRouter)
 app.use('/session',sessionRouter)
 app.use('/users', userRuter)
