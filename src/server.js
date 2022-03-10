@@ -27,11 +27,19 @@ app.use(passport.initialize())
 
 /*ruteo basicon */
 app.use(express.static(__dirname+'/public'))
-console.log(__dirname)
 app.use('/home',productsRouter)
 app.use('/session',sessionRouter)
 app.use('/users', userRuter)
 app.use('/cart', cartRouter)
+
+
+
+
+
+/*renderizo front! */
+app.get('/login',(req,res)=>{
+    res.sendFile(__dirname+'/public/pages/login.html')
+})
 
 
 /*Configuro Winston como logger*/
