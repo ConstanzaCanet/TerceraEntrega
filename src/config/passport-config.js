@@ -1,7 +1,7 @@
 import passport from "passport";
 import local from "passport-local";
 import { userService } from "../services/services.js";
-import { createHash,isValidPass,cookieExtractor } from "../utils/utils.js"
+import { createHash,isValidPass,cookieExtractor } from "../utils.js"
 import config from "./config.js"
 import jwt from "passport-jwt"
 

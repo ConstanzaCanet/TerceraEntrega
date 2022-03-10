@@ -1,13 +1,13 @@
 import express from "express";
 import passport from "passport";
-import __dirname from "./utils/utils.js"
+import __dirname from "./utils.js"
 import initializePassport from "./config/passport-config.js";
 import sessionRouter from "./router/session.js";
 import productsRouter from "./router/productsRouter.js";
 import userRuter from "./router/userRuter.js";
 import cartRouter from "./router/cartRouter.js";
 import cookieParser from "cookie-parser";
-import { createLogger } from "./utils/utils.js";
+import { createLogger } from "./utils.js";
 import config from "./config/config.js";
 import { passportGlobal } from "./utils/middleweres.js";
 
@@ -26,10 +26,8 @@ initializePassport();
 app.use(passport.initialize())
 
 /*ruteo basicon */
-app.use(express.static('public'))
-app.get('/',(req,res)=>{
-    res.render(index)
-})
+app.use(express.static(__dirname+'/public'))
+console.log(__dirname)
 app.use('/home',productsRouter)
 app.use('/session',sessionRouter)
 app.use('/users', userRuter)
