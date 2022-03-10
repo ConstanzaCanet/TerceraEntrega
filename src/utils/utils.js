@@ -30,7 +30,7 @@ export const createLogger=(env) =>{
         return winston.createLogger({
             level:'info',
             transports:[
-                new winston.transports.Console({level:info})
+                new winston.transports.Console({level:"info"})
             ]
         })
     }
