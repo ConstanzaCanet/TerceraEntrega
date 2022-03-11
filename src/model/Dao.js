@@ -54,20 +54,6 @@ export default class Dao{
         return result.toObject();
     }
 
-    updateCart = async(document,entity)=>{
-        if(!this.models[entity]) throw new Error(`Esquema ${entity} no encontrado`)
-        let id = document._id;
-        let result = await this.models[entity].findByIdAndUpdate(id,{$push:{products:document.products}})
-        return result.toObject();
-    }
-    
-    
-    addCart = async(document,entity)=>{
-        if(!this.models[entity]) throw new Error(`Esquema ${entity} no encontrado`)
-        let id = document._id;
-        let result = await this.models[entity].findByIdAndUpdate(id,{$push:{carts:document.carts}})
-        return result.toObject();
-    }
     
     delete = async(id,entity)=>{
         if(!this.models[entity]) throw new Error(`Esquema ${entity} no encontrado`)
@@ -80,5 +66,21 @@ export default class Dao{
         return this.models[entity].exists(options)
     }
     
+    
+    //Agrego el cart al user
+    addCart = async(document,entity)=>{
+        if(!this.models[entity]) throw new Error(`Esquema ${entity} no encontrado`)
+        let id = document._id;
+        let result = await this.models[entity].findByIdAndUpdate(id,{$push:{carts:document.carts}})
+        return result.toObject();
+    }
+    //Agrego el producto al cart existente
+    updateCart = async(document,entity)=>{
+        if(!this.models[entity]) throw new Error(`Esquema ${entity} no encontrado`)
+        let id = document.id;
+        console.log('Observa con atencion: '+(document.products))
+        let result = await this.models[entity].findByIdAndUpdate(id,{$pushAll:{products:document.products}})
+        return result.toObject();
+    }
 
 }

@@ -12,11 +12,13 @@ router.get('/',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),async(req,res)=
     console.log(userSerch.carts)
     let carritos = userSerch.carts
     if (carritos.length === 0) {
-        return res.send({message:"en este momento no tienes carritos a la vista", payload:user.carts})
+        return res.send({cart:null})
     }else{
         return res.send(carritos)
     }
 });
+
+
 //Comprar--> perdon si es engorroso el codigo a continuacion trate de hacer un carrito con passport pero me rompia todo,
 //lo que hice fue seleccionar el ultimo carro creado y agregar alli los servicios.
 /*en este caso tendria que tener en cuenta si el usuario esta logueado, por ello
@@ -27,7 +29,6 @@ router.post('/',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),upload.none(),
         let user = req.user;
         //primero busco si el usuario tiene carritos existentes, debo fijarme en MDB si no me inicia carritos nuevos infinitos
         let usuarioMongo = await userService.getBy({_id:user._id})
-        console.log(usuarioMongo)
         let carros = usuarioMongo.carts;
         //si tiene un carrito, que agregue el producto alli mismo
         if (carros.length>0) {
@@ -83,7 +84,7 @@ router.post('/:cid',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),upload.non
 
 
 //Elimino carrito existente
-router.delete('/:cid',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),async(req, res)=>{
+router.delete('/delete/:cid',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),async(req, res)=>{
     try {
         let cid = req.params.cid
         let result = await cartService.delete({_id:cid})

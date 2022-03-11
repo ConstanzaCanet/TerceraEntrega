@@ -180,3 +180,7 @@
 {"level":"warn","message":"Endpoint invalido"}
 {"level":"info","message":"POST at /api/users"}
 {"level":"info","message":"POST at /api/users"}
+{"level":"info","message":"DELETE at /session/login"}
+{"level":"info","message":"GET at /favicon.ico"}
+{"level":"warn","message":"Endpoint invalido"}
+{"level":"info","message":"DELETE at /cart/61d22db53b884ad6d621e83e"}

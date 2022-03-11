@@ -26,27 +26,38 @@ let carroView = document.getElementById('dataCart')
 
 fetch('/cart').then(result=>result.json()).then(json=>{
     const carrosT = json;
-    carrosT.forEach((tiket)=>{
+    console.log(carrosT)
+    if (!carrosT||carrosT.cart===null) {
         const content = `
-
-        <div class="col-sm-6 m-4">
-        <div class="card">
-            <div class="card-body">
-            <h5 class="card-title">TIKET DE COMPRA: ${tiket}</h5>
-            <a href="#" onclick='verCarro("${tiket}")' id="botoVer" class="btn btn-primary">VER</a>
+            <div class="alert alert-info" role="alert">
+                Aun no has realizado compras, sigue mirando
             </div>
-        </div>
-        </div>
-        `;
-    
-        // Append newyly created card element to the container
+        `
         carroView.innerHTML += content;
-    })
+    }else{
+
+        carrosT.forEach((tiket)=>{
+            const content = `
+    
+            <div class="col-sm-6 m-4">
+            <div class="card">
+                <div class="card-body">
+                <h5 class="card-title">TIKET DE COMPRA: ${tiket}</h5>
+                <a href="#" onclick='verCarro("${tiket}")' id="botoVer" class="btn btn-primary">VER</a>
+                </div>
+            </div>
+            </div>
+            `;
+        
+            // Append newyly created card element to the container
+            carroView.innerHTML += content;
+        })
+    }
 })
 
 
 
-
+//Tikets o carritos existentes(1 por el momento no he agregado mas)
 
 fetch('/cart').then(result=>result.json()).then(json=>{
     const carrosT = json;
@@ -59,9 +70,10 @@ fetch('/cart').then(result=>result.json()).then(json=>{
 
 function verCarro(idCarro){
     carroView.innerHTML=''
-    let boton = document.getElementById('boton');
-    boton.innerHTML=`<button type="button" class="btn btn-success" onclick=Enviar("${idCarro}")>Finalizar Compra</button>`
-    
+    let botonE = document.getElementById('botonEnvio');
+    let botonM = document.getElementById('botonMeArrepiento');
+    botonE.innerHTML=`<button type="button" class="btn btn-success" onclick=Enviar("${idCarro}")>Finalizar Compra</button>`
+    botonM.innerHTML=`<button type="button" class="btn btn-danger" onclick=Eliminar("${idCarro}")>Cancelar Compra</button>`
     
     fetch(`/cart/${idCarro}`).then(result=>result.json()).then(json=>{
         let prodId = json.products
@@ -73,6 +85,7 @@ function verCarro(idCarro){
                     <tr>
                         <td>${json.name}</td>
                         <td>${json.price}</td>
+                        <td><button type="button" class="btn btn-danger" onclick=Eliminar("${json._id}")> X </button></td>
                     </tr>
                 `;
             
@@ -83,6 +96,28 @@ function verCarro(idCarro){
     })
 }
 
+
+//Aqui es donde se complica, debo eliminar no solo el carrito, si no que ademas debo eliminar EL id_cart DEL USUARIO en carts
+function Eliminar(idCarro){
+    let sendObject={
+        _id:idCarro
+      }
+      if (window.confirm("Seguro que quieres eliminar el carrito?")) {
+        fetch(`/cart/delete/${idCarro}`,{
+            method:"DELETE",
+            body:JSON.stringify(sendObject),
+            headers:{
+              'Content-Type':'application/json'
+          }
+        }).then(json=>{
+            console.log(json)  
+            alert('Carro eliminado!');
+        })
+      }else{
+        return console.log('se mantiene compra')
+      }
+      
+}
 
 function Enviar(idCarro){
 }

@@ -101,3 +101,13 @@ function alCarro(id){
   
 
 }
+
+function logueo(){
+  var result = confirm("Ya estas logueado! Quieres desloguearte?");
+  if (result === true) {    
+    fetch('/session/logout')
+    return location.href='/login'
+  }else{
+    alert('Sigue con tu session')
+  }
+}
