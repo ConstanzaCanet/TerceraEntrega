@@ -17,24 +17,43 @@ router.get('/',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),async(req,res)=
         return res.send(carritos)
     }
 });
-
-/*creo un carrito nuevo, en este caso tendria que tener en cuenta si el usuario esta logueado, por ello
+//Comprar--> perdon si es engorroso el codigo a continuacion trate de hacer un carrito con passport pero me rompia todo,
+//lo que hice fue seleccionar el ultimo carro creado y agregar alli los servicios.
+/*en este caso tendria que tener en cuenta si el usuario esta logueado, por ello
 se autoriza primero con el token y luego con el metodo addCart agrego el _id carrito al usuario logueado */
 router.post('/',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),upload.none(),async(req,res)=>{
     try {
         let newIdProduct = req.body;
         let user = req.user;
-        let result = await cartService.save({products:newIdProduct._id});
-        try {
-            await userService.addCart(user._id,{carts:result._id})
-            res.send({message:'se agrego a un nuevo carrito', payload:result})
-        } catch (error) {
-            console.log(error)
+        //primero busco si el usuario tiene carritos existentes, debo fijarme en MDB si no me inicia carritos nuevos infinitos
+        let usuarioMongo = await userService.getBy({_id:user._id})
+        console.log(usuarioMongo)
+        let carros = usuarioMongo.carts;
+        //si tiene un carrito, que agregue el producto alli mismo
+        if (carros.length>0) {
+            try {
+                let Item=carros[carros.length-1]
+                let result = await cartService.updateCart(Item,{products:newIdProduct._id})
+                res.send({message:"se agrego al carrito", payload:result}) 
+            } catch (error) {
+                console.log(error)
+            }
+            //si no posee carrito, que cree uno nuevo
+        }else{
+            let result = await cartService.save({products:newIdProduct._id});
+            try {
+                await userService.addCart(user._id,{carts:result._id})
+                res.send({message:'se agrego a un nuevo carrito', payload:result})
+            } catch (error) {
+                console.log(error)
+            }
         }
     } catch (error) {
         console.log('aaayy eso si no se va a poder! mira con atencion el error: '+error)
     }
 });
+
+
 //Veo informacion de carrito existente
 router.get('/:cid',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),async(req, res)=>{
     try {

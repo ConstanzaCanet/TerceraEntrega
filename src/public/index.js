@@ -82,29 +82,12 @@ function verProducto(id){
   })
 };
 
-//Comprar--> perdon si es engorroso el codigo a continuacion trate de hacer un carrito con passport pero me rompia todo,
-//lo que hice fue seleccionar el ultimo carro creado y agregar alli los servicios.
 
+//Compra de productos, falta agregar funcionalidad de cantidad(stock + cantidad que lleva el cliente)
 function alCarro(id){
   let sendObject={
     _id:id
   }
-  console.log(sendObject)
-  let carros = user.carts;
-  if (carros.length>1) {
-    let Item=carros[carros.length-1]
-    fetch(`cart/${Item}`,{
-      method:"POST",
-      body:JSON.stringify(sendObject),
-      headers:{
-      'Content-Type':'application/json'
-       }
-    }).then(json=>{
-      console.log(json)  
-      alert('Agregado al carro');
-  })
-  }else{
-
     fetch('/cart',{
         method:"POST",
         body:JSON.stringify(sendObject),
@@ -115,6 +98,6 @@ function alCarro(id){
         console.log(json)  
         alert('Agregado al carro');
     })
-  }
+  
 
 }
