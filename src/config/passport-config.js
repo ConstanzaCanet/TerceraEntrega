@@ -43,8 +43,8 @@ const initializePassport=()=>{
             }
             const user = await userService.getBy({email:username})
             if(!user) return done(null,false,{messages:"No se encontro el usuario"})
-            if(user.password!== password) return done(null,false,{messages:"password erroneo"})
-            if(isValidPass(user,password)) return done(null,false,{messages:"password erroneo"})
+            //if(user.password!== password) return done(null,false,{messages:"password erroneo"})
+            if(!isValidPass(user,password)) return done(null,false,{messages:"password erroneo"})
             return done(null,user)
         } catch (error) {
             return done(error)
