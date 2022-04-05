@@ -1,19 +1,11 @@
 import express from 'express';
-import {productsService} from '../services/services.js'
-
+import productsController from '../controllers/productsController.js';
 
 const router = express.Router();
 
-router.get('/',async(req,res)=>{
-    let result = await productsService.getAll()
-    res.send(result)
-})
+router.get('/', productsController.productsAll)
 
-router.get("/:pid",async(req,res)=>{
-    let id = req.params.pid
-    let result = await productsService.getBy({_id:id})
-    res.send(result)
-})
+router.get("/:pid",productsController.productId)
 
 
 export default router;

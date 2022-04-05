@@ -41,7 +41,7 @@ export default class Dao{
             let result=await instance.save();
             return result?result.toObject():null;
         } catch (error) {
-            console.log('Hay un error amigo: '+error);
+            console.log('Hay un error que salta en DAO amigo: '+error);
             return null;
         }
     };
@@ -77,10 +77,11 @@ export default class Dao{
     //Agrego el producto al cart existente
     updateCart = async(document,entity)=>{
         if(!this.models[entity]) throw new Error(`Esquema ${entity} no encontrado`)
-        let id = document.id;
-        console.log('Observa con atencion: '+(document.products))
-        let result = await this.models[entity].findByIdAndUpdate(id,{$pushAll:{products:document.products}})
+        let id = document._id;
+        console.log('Observa con atencion en DAO: '+(document._id))
+        let result = await this.models[entity].findByIdAndUpdate(id,{$push:{products:document.products}})
         return result.toObject();
     }
+    
 
 }

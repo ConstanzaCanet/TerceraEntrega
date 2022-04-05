@@ -16,7 +16,7 @@ export default class Carts {
                     type:Schema.Types.ObjectId,
                     ref:'products'
                 }],
-                default:[]
+                default:[],
             }
         }
     }

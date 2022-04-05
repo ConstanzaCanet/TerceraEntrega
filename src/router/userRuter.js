@@ -1,18 +1,11 @@
 import express from "express";
-import { userService } from "../services/services.js";
 import{passportGlobal,checkAuth} from '../utils/middleweres.js';
+import userController from "../controllers/userController.js"
 
 const router =express.Router();
 
-router.get('/',async(req,res)=>{
-    let results = await userService.getAll();
-    res.send(results)
-});
+router.get('/',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),userController.user);
 
-router.get('/:uid',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),async(req,res)=>{
-    let uid = req.params.uid
-    let result = await userService.getBy({_id:uid});
-    res.send(result)
-})
+router.get('/:uid',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),userController.userId)
 
 export default router;

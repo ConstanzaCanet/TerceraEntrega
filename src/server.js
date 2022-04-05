@@ -9,6 +9,7 @@ import cartRouter from "./router/cartRouter.js";
 import cookieParser from "cookie-parser";
 import { createLogger } from "./utils.js";
 import config from "./config/config.js";
+import{passportGlobal,checkAuth} from './utils/middleweres.js';
 
 const app = express();
 const PORT = process.env.PORT||8080;
@@ -26,10 +27,14 @@ app.use(passport.initialize())
 
 /*ruteo basicon */
 app.use(express.static(__dirname+'/public'))
-app.use('/home',productsRouter)
+app.use('/home',passportGlobal('jwt'),checkAuth(["ADMIN","USER"]),productsRouter)
 app.use('/session',sessionRouter)
 app.use('/users', userRuter)
 app.use('/cart', cartRouter)
+
+
+/*Testeo de endpoints---> al tener el authToken realice esto aparte */
+app.use('/testeoHome',productsRouter)
 
 
 
