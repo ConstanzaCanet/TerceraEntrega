@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-let Schema= mongoose.Schema;
 
 export default class Products{
     constructor(data){
@@ -11,12 +10,16 @@ export default class Products{
     }
     static get schema(){
         return{
-            name:String,
+            title:String,
             description:String,
-            price:String,
-            stock:String,
-            role:String,
+            price:Number,
+            stock:Number,
+            code:String,
             thumbnail:String,
+            status:{
+                type:String,
+                default:"available"
+            }
         }
     }
 }

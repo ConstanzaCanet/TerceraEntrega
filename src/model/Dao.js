@@ -2,23 +2,25 @@ import mongoose from "mongoose";
 import User from "./user.js";
 import Carts from "./carts.js";
 import Products from "./products.js";
+import Chat from "./chat.js";
 
 
 export default class Dao{
     constructor(config){
         this.mongoose = mongoose.connect(config.url,{useNewUrlParser:true}).catch(error=>{
-            console.log(error);
             process.exit();
         })
         const timestamp = {timestamps:{createdAt:'created_at',updatedAt:'updated_at'}};
         const userSchema = mongoose.Schema(User.schema,timestamp);
         const cartsSchema = mongoose.Schema(Carts.schema,timestamp);
         const productsSchema = mongoose.Schema(Products.schema,timestamp);
+        const chatsSchema = mongoose.Schema(Chat.schema,timestamp);
 
         this.models={
             [User.model]:mongoose.model(User.model,userSchema),
             [Carts.model]:mongoose.model(Carts.model,cartsSchema),
             [Products.model]:mongoose.model(Products.model,productsSchema),
+            [Chat.model]:mongoose.model(Chat.model,chatsSchema)
         }
     }
 
@@ -41,7 +43,6 @@ export default class Dao{
             let result=await instance.save();
             return result?result.toObject():null;
         } catch (error) {
-            console.log('Hay un error amigo: '+error);
             return null;
         }
     };
@@ -54,20 +55,6 @@ export default class Dao{
         return result.toObject();
     }
 
-    updateCart = async(document,entity)=>{
-        if(!this.models[entity]) throw new Error(`Esquema ${entity} no encontrado`)
-        let id = document._id;
-        let result = await this.models[entity].findByIdAndUpdate(id,{$push:{products:document.products}})
-        return result.toObject();
-    }
-    
-    
-    addCart = async(document,entity)=>{
-        if(!this.models[entity]) throw new Error(`Esquema ${entity} no encontrado`)
-        let id = document._id;
-        let result = await this.models[entity].findByIdAndUpdate(id,{$push:{carts:document.carts}})
-        return result.toObject();
-    }
     
     delete = async(id,entity)=>{
         if(!this.models[entity]) throw new Error(`Esquema ${entity} no encontrado`)
@@ -79,6 +66,5 @@ export default class Dao{
         if(!this.models[entity]) throw new Error(`Esquema ${entity} no encontrado`)
         return this.models[entity].exists(options)
     }
-    
 
 }

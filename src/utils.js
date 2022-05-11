@@ -2,6 +2,7 @@ import {fileURLToPath} from 'url';
 import {dirname} from 'path';
 import bcrypt from 'bcrypt';
 import winston from 'winston';
+import config from './config/config.js';
 
 
 const filename = fileURLToPath(import.meta.url);
@@ -12,11 +13,12 @@ export const createHash = password=>bcrypt.hashSync(password,bcrypt.genSaltSync(
 export const isValidPass = (user,password) => bcrypt.compareSync(password,user.password);
 export const cookieExtractor = req =>{
     let token = null;
-    if(req&&req.cookies){
-        token=req.cookies["JWT_COOKIE"]
+    if (req && req.cookies)
+    {
+        token = req.cookies[config.jwt.COOKIE_NAME];
     }
-    return token
-};
+    return token;
+}
 
 export const createLogger=(env) =>{
     if(env === "PROD"){
@@ -36,6 +38,11 @@ export const createLogger=(env) =>{
     }
 }
 
+export const serialize = (object,keys) =>{
+    let serializedObject = Object.fromEntries(Object.entries(object).filter(pair=>keys.includes(pair[0])))
+    serializedObject.id = object._id;
+    return serializedObject;
+}
 
 
 
