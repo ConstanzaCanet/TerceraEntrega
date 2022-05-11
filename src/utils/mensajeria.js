@@ -26,10 +26,8 @@ function sendMail(email,carrito){
 
     try {
         const result = await transporter.sendMail(mail)
-        console.log(result)
         return {messages:'Revisa tu casilla de mensajes para validar la compra'}
     } catch (error) {
-        console.log(error)
         return error
     }
 }

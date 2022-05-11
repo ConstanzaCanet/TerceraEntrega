@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-let Schema= mongoose.Schema;
+let Schema = mongoose.Schema;
 export default class User{
     constructor(data){
         this.data =data;
@@ -12,17 +12,19 @@ export default class User{
         return{
             first_name:String,
             last_name:String,
-            adress:String,
-            age:String,
-            phone:String,
-            email:String,
             password:String,
-            carts:[{
-                type:String,
-                default:true
-            }],
             role:String,
-            profile_picture:String,
+            email:String,
+            status:{
+                type:Boolean,
+                default:true
+            },
+            cart:{
+                type:Schema.Types.ObjectId,
+                ref:"carts"
+            },
+            phone:String,
+            profile_picture:String
         }
     }
 }

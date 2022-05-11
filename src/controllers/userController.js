@@ -4,9 +4,7 @@ const user= async (req,res)=>{
     try {        
         let results = await userService.getAll();
         res.send(results)
-    } catch (error) {
-        console.log(error)
-    }
+    } catch (error) { }
 };
 
 const userId = async (req,res)=>{
@@ -14,9 +12,7 @@ const userId = async (req,res)=>{
     try {
         let result = await userService.getBy({_id:uid});
         res.send(result)
-    } catch (error) {
-        console.log(error)
-    }
+    } catch (error) { }
 };
 
 export default{

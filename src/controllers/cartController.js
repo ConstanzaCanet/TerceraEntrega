@@ -1,87 +1,119 @@
-import { cartService,userService } from "../services/services.js";
-import upload from "../utils/upload.js"
-import{passportGlobal,checkAuth} from '../utils/middleweres.js';
+import { cartService,userService,productsService } from "../services/services.js";
 
-const cart = async (req,res)=>{
-    try {
-        let user = req.user;
-        let userSerch = await userService.getBy({_id:user._id})
-        console.log(userSerch.carts)
-        let carritos = userSerch.carts
-        if (carritos.length === 0) {
-            return res.send({cart:null})
-        }else{
-            return res.send(carritos)
-        }
-    } catch (error) {
-        console.log(error)
-    }
-}
-
-const newCart = async (req,res)=>{
-    try {
-        let newIdProduct = req.body;
-        let user = req.user;
-        //primero busco si el usuario tiene carritos existentes, debo fijarme en MDB si no me inicia carritos nuevos infinitos
-        let usuarioMongo = await userService.getBy({_id:user._id})
-        let carros = usuarioMongo.carts;
-        //si tiene un carrito, que agregue el producto alli mismo
-        if (carros.length>0) {
-            try {
-                let Item=carros[carros.length-1]
-                let result = await cartService.updateCart(Item,{products:newIdProduct._id})
-                res.send({message:"se agrego al carrito", payload:result}) 
-            } catch (error) {
-                console.log(error)
-            }
-            //si no posee carrito, que cree uno nuevo
-        }else{
-            let result = await cartService.save({products:newIdProduct._id});
-            try {
-                await userService.addCart(user._id,{carts:result._id})
-                res.send({message:'se agrego a un nuevo carrito', payload:result})
-            } catch (error) {
-                console.log(error)
-            }
-        }
-    } catch (error) {
-        console.log('aaayy eso si no se va a poder! mira con atencion el error: '+error)
-    }
-}
+//Muestro el carrito por id
 const showCart = async (req,res)=>{
     try {
-        let cid = req.params.cid;
-        console.log(cid)
-        let result = await cartService.getBy({_id:cid})
-        res.send(result) 
-        
-    } catch (error) {
-        console.log(error)
-    }
-}
-/*No lo utilizo en este momento... pero estoy trabajando en el carrito aun, lo dejo por las dudas */
-const addToCart = async (req,res)=>{
-    try {
-        let cid = req.params.cid;
-        let newIdProduct = req.body;
-        let result = await cartService.updateCart(cid,{products:newIdProduct._id})
-        res.send({message:"se agrego al carrito", payload:result}) 
-        
-    } catch (error) {
-        console.log(error)
-    }
+        let id = req.params.cid;
+        let cart = await cartService.getByWithPopulate({_id:id})
+        res.send({status:"success",payload:cart})
+    } catch (error) { }
 }
 
+
+//Agrego producto al carrito
+const addToCart = async (req,res)=>{
+        let quantityChanged = false;
+        let {cid,pid} = req.params;
+        let {quantity} = req.body;//3
+        //Check if product exists
+        let product = await productsService.getBy({_id:pid});
+        if(!product) return res.status(404).send({status:"error",error:"No se encuentra ese producto"});
+        //check if cart exists
+        let cart = await cartService.getBy({_id:cid});
+        if(!cart) return res.status(404).send({status:"error",error:"No se encontro el carrito"});
+        //Check product stock
+        if(product.stock===0) return res.status(400).send({status:"error",error:"Lo sentimos, se ha vendido todo lo que teniamos!"});
+        //Check if requested quantity is greater than product stock
+        if(product.stock<quantity){
+            quantity=product.stock
+            quantityChanged=true;
+        }
+        //Remove stock
+        product.stock = product.stock - quantity;
+        if(product.stock===0)
+            product.status="unavailable"
+        await productsService.update(pid,product);
+        //Add product to cart
+        cart.products.push({product:pid,quantity});
+        await cartService.update(cid,cart);
+        res.send({status:"success",quantityChanged,newQuantity:quantity,message:"Se agrego el producto al carrito!"})
+}
+//Elimino producto del carrito---> recordar que por defecto siempre existe
 const deleteCart = async (req,res)=>{
-    try {
-        let cid = req.params.cid
-        let result = await cartService.delete({_id:cid})
-        res.send({message:'se elimino tu carrito', payload:result})
-    } catch (error) {
-        console.log(error)
+    let {pid,cid} = req.params;
+    //Check if cart exists.
+    let cart = await cartService.getByWithPopulate({_id:cid});
+    if(!cart)  return res.status(404).send({status:"error",error:"Can't find cart"});
+    //Check if product exists in the cart
+    if(cart.products.some(element=>element.product._id.toString()===pid)){
+        //Get product with pid
+        let product = await productsService.getBy({_id:pid});
+        if(!product) return res.status(404).send({status:"error",error:"Product not found"});
+        //Get associated product on Cart
+        let productInCart = cart.products.find(element=>element.product._id.toString()===pid);
+        //Restock actual quantity
+        product.stock = product.stock + productInCart.quantity;
+        await productsService.update(pid,product);
+        //Delete product from cart
+        cart.products = cart.products.filter(element=>element.product._id.toString()!==pid);
+        await cartService.update(cid,cart);
+        res.send({status:"success",message:"Product deleted"})
+    }else{
+        res.status(400).send({error:"Product not found in the cart"})
     }
+
+}
+//Actualizacion del carro
+const updateCart = async(req,res)=>{
+    let {cid} = req.params;
+    let {products} = req.body;
+    let stockLimitation = false;
+
+    let cart = await cartService.getBy({_id:cid});
+    if(!cart)  return res.status(404).send({status:"error",error:"No encuentro el carrito"});
+
+    for(const element of cart.products){
+        let product = await productsService.getBy({_id:element.product});
+
+        let associatedProductInCart = cart.products.find(element=>element.product.toString()===product._id.toString());
+
+        let associatedProductInInput = products.find(element=>element.product.toString()===product._id.toString());
+        if(associatedProductInCart.quantity!==associatedProductInInput.quantity){
+
+            if(associatedProductInCart.quantity>associatedProductInInput.quantity){
+                let difference = associatedProductInCart.quantity - associatedProductInInput.quantity;
+                associatedProductInCart.quantity = associatedProductInInput.quantity;
+                product.stock+=difference;
+
+                await productsService.update(product._id,product);
+            }else{
+                let difference = associatedProductInInput.quantity - associatedProductInCart.quantity;
+                if(product.stock>=difference){
+                    product.stock -=difference;
+                    await productsService.update(product._id,product);
+                    associatedProductInCart.quantity = associatedProductInInput.quantity;
+                }
+                else{
+                    stockLimitation=true;
+                    associatedProductInCart.quantity +=product.stock;
+                    product.stock=0;
+                    await productsService.update(product._id,product);
+                }
+            }
+        }
+    }
+    await cartService.update(cid,cart);
+    res.send({status:"success",stockLimitation})
+}
+const confirmPurchase = async(req,res) =>{
+    let {cid} = req.params;
+    let cart = await cartService.getBy({_id:cid});
+    if(!cart)  return res.status(404).send({status:"error",error:"No encuentro el carrito"});
+    cart.products=[];
+    await cartService.update(cid,cart);
+    res.send({status:"success",message:"Finished purchase!"})
 }
 
 export default{
-    cart,newCart,showCart,addToCart,deleteCart
+    showCart,addToCart,deleteCart, updateCart,confirmPurchase
 }

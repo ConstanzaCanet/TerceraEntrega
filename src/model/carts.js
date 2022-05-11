@@ -11,13 +11,20 @@ export default class Carts {
     }
     static get schema(){
         return {
-            products:{
-                type:[{
-                    type:Schema.Types.ObjectId,
-                    ref:'products'
-                }],
-                default:[],
-            }
+            products:[
+                {
+                    product:{
+                        type:Schema.Types.ObjectId,
+                        ref:"products"
+                    },
+                    quantity:{
+                        type:Number,
+                        default:1
+                    }
+                }
+            ]
+            
         }
     }
 }
+
